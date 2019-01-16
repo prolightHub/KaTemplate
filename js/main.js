@@ -1,6 +1,0 @@
-function main()
-{
-
-}
-
-createProcessing(main);
