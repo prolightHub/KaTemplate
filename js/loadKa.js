@@ -53,7 +53,7 @@ function createProcessing()
 				}
 				throw new Error("Images are in development.");*/
 				
-				if(!processing.imageCache)
+				if(!processing.imageCache && processing.imageCache !== {})
 				{
 					return processing.loadImage(url);
 				}
