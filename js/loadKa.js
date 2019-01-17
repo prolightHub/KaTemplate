@@ -42,7 +42,8 @@ function createProcessing()
 				{
 					processing.externals.sketch.imageCache.add(url);
 				}*/
-				return processing.loadImage(url);
+				throw new Error("Images are in development.");
+				//return processing.loadImage(url);
 			}
 			catch(e)
 			{
