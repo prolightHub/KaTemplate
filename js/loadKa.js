@@ -31,7 +31,9 @@ function createProcessing()
 			console.log(sound + " is not supported yet..."); 
 		};
 		
+		processing.imageCache = JSON.parse(localStorage.getItem("imageCache")) || {};
 		const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+		
 		processing.getImage = function(img) 
 		{ 
 			try{
@@ -42,8 +44,21 @@ function createProcessing()
 				{
 					processing.externals.sketch.imageCache.add(url);
 				}*/
-				throw new Error("Images are in development.");
-				return processing.loadImage(url);
+				/*throw new Error("Images are in development.");
+				return processing.loadImage(url);*/
+				
+				if(processing.imageCache[url])
+				{
+					return processing.loadImage(processing.imageCache[url]);
+				}else{
+					toDataURL(proxyUrl + url, function(dataUrl)
+					{
+						processing.imageCache[url] = dataUrl; 
+						localStorage.setItem("imageCache", JSON.stringify(processing.imageCache));
+					});
+
+					return processing.loadImage(processing.imageCache[url] || url);
+				}
 			}
 			catch(e)
 			{
@@ -116,6 +131,19 @@ function combine(a, c)
 	return new Function("return function any(" + funcArgs + "){" + (config.beginCode || "").replace("\n", "") + join + (config.endCode || "") + "}")();
 }
 
-
-
-
+function toDataURL(url, callback) 
+{
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function() 
+	{
+		var reader = new FileReader();
+		reader.onloadend = function() 
+		{
+			callback(reader.result);
+		}
+		reader.readAsDataURL(xhr.response);
+	};
+	xhr.open('GET', url);
+	xhr.responseType = 'blob';
+	xhr.send();
+}
