@@ -45,19 +45,10 @@ function createProcessing()
 		{ 
 			try{
 				var url = "https://www.kasandbox.org/programming-images/" + img + ".png";
-				/*var url = proxyUrl + "file:///home/pi/Downloads/live-editor-master/images/" + img + ".png";*/
-                                
-				/*if((url in processing.externals.sketch.imageCache.images))
-				{
-					processing.externals.sketch.imageCache.add(url);
-				}
-				throw new Error("Images are in development.");*/
-				
 				if(!processing.imageCache && processing.imageCache !== {})
 				{
 					return processing.loadImage(url);
 				}
-			
 				if(processing.imageCache[url])
 				{
 					return processing.loadImage(processing.imageCache[url]);
