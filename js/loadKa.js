@@ -287,7 +287,8 @@ function createProcessing()
 	}
 
 	code = combine(new Function("return " + code.toString().split("\n").join(" "))(), any);
-	
+	code = new Function("return " + code.toString().replace(code.toString().match(
+		"this[ ]*\[\[[ ]*(\"KAInfiniteLoopSetTimeout\"|\w*)[ ]*\]\][ ]*\(\d*\);*")[0], ""))();
 	window.canvas = document.getElementById("canvas"); 
 	window.processing = new Processing(canvas, code);
 }
