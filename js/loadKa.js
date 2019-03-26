@@ -38,6 +38,38 @@
 			return false;
 		};
 
+		(function()
+		{
+			try{
+				var rg = (/getImage([ ]*)\(([ ]*)\"(.*)\"([ ]*)\)/g);
+				var array = [];
+
+				var v;
+				var i = 0;
+
+				while(v !== null)
+				{
+					v = rg.exec(any.toString());
+					if(v && v[3] && this.cache.imageNames.indexOf(v[3].split(".")[0]) === -1)
+					{
+						array.push(v[3].split(".")[0]);
+					}
+
+					i++;
+					if(i > 2000)
+					{
+						break;
+					}
+				}
+
+				this.cache.imageNames = this.cache.imageNames.concat(array);
+			}
+			catch(e)
+			{
+				console.log(e);
+			}
+		}());
+
 		this.setup = function()
 		{
 			function code(processing)
