@@ -1,4 +1,4 @@
-!(function(window, JSON, localStorage)
+(function(window, JSON, localStorage)
 {
 	function createProcessing()
 	{
@@ -179,18 +179,53 @@
 				processing.keyReleased = function() {};
 				processing.keyTyped = function() {};
 				
+				try{
+					processing.soundCache = JSON.parse(localStorage.getItem("pjs-soundCache"));
+				}
+				catch(e)
+				{
+					console.log(e);
+					delete processing.soundCache;
+				}
+
+				if(!processing.soundCache)
+				{
+					processing.soundCache = {};
+				}
+
 				processing.playSound = function(source, volume)
 			    {
 			        var sound = new Audio();
 			        sound.volume = (typeof volume === "number" ? vol : 1);
 			        sound.appendChild(source);
-			        sound.play(); 
+			        sound.play().catch(); 
 			    };
 			    processing.getSound = function(path)
 			    {
-			    	var source = document.createElement("source");
-			        source.src = window.links.sound[0] + path + ".mp3";
-			        return source;
+			    	if(!processing.soundCache)
+			    	{
+			    		var source = document.createElement("source");
+			        	source.src = window.links.sound[0] + path + ".mp3";
+			        	return source;
+			    	}
+			        
+		        	if(processing.soundCache[path])
+			        {
+			        	var source = document.createElement("source");
+			        	source.src = processing.soundCache[path];
+			        	return source;
+			        }else{
+			        	source = document.createElement("source");
+			        	source.src = window.links.sound[0] + path + ".mp3";
+
+			        	toDataURL(source.src, function(dataUrl)
+		        		{
+		        			processing.soundCache[path] = dataUrl;
+			        		localStorage.setItem("pjs-soundCache", JSON.stringify(processing.soundCache));
+		        		});
+
+			        	return source;
+			        }
 			    };
 
 				processing.getImage = function(name)
@@ -256,11 +291,12 @@
 		this.imageProcessing = new Processing(canvas, function(processing)
 		{
 			try{
-				processing.imageCache = JSON.parse(localStorage.getItem("imageCache"));
+				processing.imageCache = JSON.parse(localStorage.getItem("pjs-imageCache"));
 			}
 			catch(e)
 			{
 				console.log(e);
+				delete processing.imageCache;
 			}
 
 			if(!processing.imageCache)
@@ -291,7 +327,7 @@
 				toDataURL(window.links.proxyUrl + url, function(dataUrl)
 				{
 					processing.imageCache[name] = dataUrl; 
-					localStorage.setItem("imageCache", JSON.stringify(processing.imageCache));
+					localStorage.setItem("pjs-imageCache", JSON.stringify(processing.imageCache));
 					callback(processing.imageCache[name], name);
 				});
 
