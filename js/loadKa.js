@@ -1,90 +1,14 @@
-function createProcessing()
+!(function(window, JSON, localStorage)
 {
-	var args = Array.prototype.slice.call(arguments);
-	args.push({ beginCode: "with(processing)\n{", endCode: "}"});
-	var any = combine.apply(this, args);
-
-	//Onelined to make actual console line output
-	function code(processing)
+	function createProcessing()
 	{
-		var processing = processing;
+		var args = Array.prototype.slice.call(arguments);
+		args.push({ beginCode: "with(processing)\n{", endCode: "}"});
+		var any = combine.apply(this, args);
 
-		processing.size(400, 400);
-		processing.background(255, 255, 255);
-		processing.angleMode = "degrees";
-		
-		processing.mousePressed = function() {};
-		processing.mouseReleased = function() {};
-		processing.mouseMoved = function() {};
-		processing.mouseDragged = function() {};
-		processing.mouseOver = function() {};
-		processing.mouseOut = function() {};
-		processing.keyPressed = function() {};
-		processing.keyReleased = function() {};
-		processing.keyTyped = function() {};
-		
-		processing.getSound = function(name) 
-		{ 
-			return "noSound"; 
-		};
-		processing.playSound = function(sound) 
-		{ 
-			console.log(sound + " is not supported yet..."); 
-		};
-
-		try{
-			processing.imageCache = JSON.parse(localStorage.getItem("imageCache"));
-		}
-		catch(e)
-		{
-			console.log(e);
-		}
-
-		if(!processing.imageCache)
-		{
-			processing.imageCache = {};
-		}
-	
-		const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-		processing.pathToImages = "https://www.kasandbox.org/third_party/javascript-khansrc/live-editor/build/images/";
-		processing.pendingImageRequests = {};
-
-		/*"https://www.kasandbox.org/programming-images/";*/
-
-		processing.getImage = function(name, override) 
-		{ 
-			try{
-				var url = override || processing.pathToImages + name + ".png";
-				if(!processing.imageCache)
-				{
-					return processing.loadImage(url);
-				}
-				if(processing.imageCache[url])
-				{
-					return processing.loadImage(processing.imageCache[url]);
-				}else{
-					processing.pendingImageRequests[url] = true;
-
-					toDataURL(proxyUrl + url, function(dataUrl)
-					{
-						processing.imageCache[url] = dataUrl; 
-						delete processing.pendingImageRequests[url];
-
-						localStorage.setItem("imageCache", JSON.stringify(processing.imageCache));
-					});
-
-					return processing.loadImage(processing.imageCache[url] || url);
-				}
-			}
-			catch(e)
-			{
-				console.log(e);
-				console.log(img + " is not supported yet..."); 
-				return processing.get(0, 0, 1, 1); 
-			}
-		};
-
-		processing.loadedTempImages = [
+		this.cache = window.cache = {};
+		this.cache.loadedImages = window.cache.loadedImages = {};
+		this.cache.imageNames = window.cache.imageNames = [
 			"avatars/aqualine-sapling", 
 			"avatars/aqualine-seed", 
 			"avatars/aqualine-seedling", 
@@ -199,6 +123,7 @@ function createProcessing()
 			"cute/ShadowSouthEast", 
 			"cute/ShadowSouthWest", 
 			"cute/ShadowWest", 
+			"cute/WoodBlock",
 			"cute/Star", 
 			"cute/StoneBlock", 
 			"cute/StoneBlockTall", 
@@ -224,126 +149,225 @@ function createProcessing()
 			"space/9"
 		];
 
-		processing.loadedTempImages.forEach((img) => processing.getImage(img));
-		
-		var lastError = "";
-		var lastGet = processing.get;
-		processing.get = function()
+		window.links = {
+			proxyUrl : "https://cors-anywhere.herokuapp.com/",
+			image : ["https://www.kasandbox.org/third_party/javascript-khansrc/live-editor/build/images/", 
+					 "https://github.com/Khan/live-editor/tree/master/images",
+					 "https://www.kasandbox.org/programming-images/"],
+		};
+
+		var self = this;
+
+		this.setup = function()
+		{
+			function code(processing)
+			{
+				processing.size(400, 400);
+				processing.background(255, 255, 255);
+				processing.angleMode = "degrees";
+				
+				processing.mousePressed = function() {};
+				processing.mouseReleased = function() {};
+				processing.mouseMoved = function() {};
+				processing.mouseDragged = function() {};
+				processing.mouseOver = function() {};
+				processing.mouseOut = function() {};
+				processing.keyPressed = function() {};
+				processing.keyReleased = function() {};
+				processing.keyTyped = function() {};
+				
+				processing.getSound = function(name)
+				{ 
+					return "Sound"; 
+				};
+				processing.playSound = function(sound) 
+				{ 
+					console.log(sound + " is not supported yet..."); 
+				};
+
+				processing.getImage = function(name)
+				{
+					return (window.cache || self.cache).loadedImages[name] || processing.get(0, 0, 1, 1);
+				};
+
+				var lastGet = processing.get;
+				processing.get = function()
+				{
+					try{
+						return lastGet.apply(this, arguments);
+					}
+					catch(e)
+					{
+						if(arguments[2] !== 0 && arguments[3] !== 0)
+						{
+							console.log(e);
+						}else{
+							throw e;
+						}
+					}
+				};
+
+				processing.debug = function(event) 
+				{
+					try{
+						return window.console.log.apply(this, arguments);
+					} 
+					catch(e) 
+					{
+						processing.println.apply(this, arguments);
+					}
+				};
+				processing.Program = {
+					restart: function() 
+					{
+						window.location.reload();
+					},
+					assertEqual: function(equiv) 
+					{
+						if(!equiv) 
+						{
+							console.warn(equiv);
+						}
+					},
+				};
+			}
+
+			code = combine(new Function("return " + code.toString().split("\n").join(" "))(), any);
+			
+			var matched = code.toString().match("this[ ]*\[[ ]*\[[ ]*(\"KAInfiniteLoopSetTimeout\")[ ]*\][ ]*\][ ]*\([ ]*\d*[ ]*\);*");
+			
+			if(matched)
+			{
+				code = new Function("return " + code.toString().replace(matched[0], ""))();
+			}
+
+			window.canvas = document.getElementById("canvas"); 
+			window.processing = new Processing(canvas, code);
+		};
+
+		this.imageProcessing = new Processing(canvas, function(processing)
 		{
 			try{
-				return lastGet.apply(this, arguments);
+				processing.imageCache = JSON.parse(localStorage.getItem("imageCache"));
 			}
 			catch(e)
 			{
-				if(arguments[2] !== 0 && arguments[3] !== 0)
-				{
-					if(e.toString() !== lastError)
-					{
-						console.warn(e);
-					}
-					lastError = e.toString();
+				console.log(e);
+			}
 
-					for(var i in processing.pendingImageRequests)
+			if(!processing.imageCache)
+			{
+				processing.imageCache = {};
+			}
+
+			processing.getImage = function(name, callback, url)
+			{
+				if(name === undefined) { return get(0, 0, 1, 1); }
+
+				url = url || window.links.image[0] + name.split(".")[0] + ".png";
+				callback = callback || function() {};
+
+				if(!processing.imageCache)
+				{
+					var img = processing.loadImage(url);
+					callback(img, name);
+					return img;
+				}
+				if(processing.imageCache[name])
+				{
+					var img = processing.loadImage(processing.imageCache[name]);
+					callback(img, name);
+					return img;
+				}
+
+				toDataURL(window.links.proxyUrl + url, function(dataUrl)
+				{
+					processing.imageCache[name] = dataUrl; 
+					localStorage.setItem("imageCache", JSON.stringify(processing.imageCache));
+					callback(processing.imageCache[name], name);
+				});
+
+				return processing.loadImage(processing.imageCache[url] || url);
+			};
+
+			window.cache.imageNames.forEach(function(element, index, array)
+			{
+				processing.getImage(element, function(img, name)
+				{
+					window.cache.loadedImages[name] = img;
+
+					if(index === array.length - 1)
 					{
-						if(processing.pendingImageRequests[i])
+						(window.setTimeout || function(func)
 						{
-							return;
-						}
+							return func.apply(this, arguments);
+						})
+						(function()
+						{
+							self.setup();
+						}, 50);
 					}
+				});
+			});
+		});
+	}
 
-					window.setTimeout(function()
-					{
-						window.location.reload();
-					}, 50);
-				}else{
-					throw e;
-				}
+	function combine(a, c)
+	{
+		var args = Array.prototype.slice.call(arguments);
+		var config = {};
+
+		var funcArgs = "";
+		var join = "";
+		for(var i = 0; i < args.length; i++)
+		{
+			if(typeof args[i] === "object")
+			{
+				config = args[i];
+				continue;
 			}
-		};
 
-		processing.debug = function(event) 
-		{
-			try{
-				return window.console.log.apply(this, arguments);
-			} 
-			catch(e) 
+			var to = args[i].toString();
+
+			var temp = to.substring(to.indexOf('(') + 1, to.indexOf(')'));
+
+			if(temp !== "" && temp !== " ")
 			{
-				processing.println.apply(this, arguments);
+				funcArgs += temp + ",";
 			}
-		};
-		processing.Program = {
-			restart: function() 
+
+			join += to.slice(to.indexOf('{') + 1, -1);
+		}
+
+		funcArgs = funcArgs.slice(0, -1);
+		
+		return new Function("return function any(" + funcArgs + "){" + (config.beginCode || "").replace("\n", "") + join + (config.endCode || "") + "}")();
+	}
+
+	function toDataURL(url, callback) 
+	{
+		var xhr = new XMLHttpRequest();
+		xhr.onload = function() 
+		{
+			var reader = new FileReader();
+			reader.onloadend = function() 
 			{
-				window.location.reload();
-			},
-			assertEqual: function(equiv) 
-			{
-				if(!equiv) 
-				{
-					console.warn(equiv);
-				}
-			},
+				callback(reader.result);
+			}
+			reader.readAsDataURL(xhr.response);
 		};
+		xhr.open('GET', url);
+		xhr.responseType = 'blob';
+		xhr.send();
 	}
 
-	code = combine(new Function("return " + code.toString().split("\n").join(" "))(), any);
-	
-	var matched = code.toString().match("this[ ]*\[[ ]*\[[ ]*(\"KAInfiniteLoopSetTimeout\")[ ]*\][ ]*\][ ]*\([ ]*\d*[ ]*\);*");
-	
-	if(matched)
-	{
-		code = new Function("return " + code.toString().replace(matched[0], ""))();
-	}
-	
-	window.canvas = document.getElementById("canvas"); 
-	window.processing = new Processing(canvas, code);
-}
-
-function combine(a, c)
-{
-	var args = Array.prototype.slice.call(arguments);
-	var config = {};
-
-	var funcArgs = "";
-	var join = "";
-	for(var i = 0; i < args.length; i++)
-	{
-		if(typeof args[i] === "object")
-		{
-			config = args[i];
-			continue;
-		}
-
-		var to = args[i].toString();
-
-		var temp = to.substring(to.indexOf('(') + 1, to.indexOf(')'));
-
-		if(temp !== "" && temp !== " ")
-		{
-			funcArgs += temp + ",";
-		}
-
-		join += to.slice(to.indexOf('{') + 1, -1);
-	}
-
-	funcArgs = funcArgs.slice(0, -1);
-	
-	return new Function("return function any(" + funcArgs + "){" + (config.beginCode || "").replace("\n", "") + join + (config.endCode || "") + "}")();
-}
-
-function toDataURL(url, callback) 
-{
-	var xhr = new XMLHttpRequest();
-	xhr.onload = function() 
-	{
-		var reader = new FileReader();
-		reader.onloadend = function() 
-		{
-			callback(reader.result);
-		}
-		reader.readAsDataURL(xhr.response);
+	return {
+		createProcessing: window.createProcessing = this.createProcessing = createProcessing,
+		toDataURL: window.toDataURL = this.toDataURL = toDataURL,
+		combine: window.combine = this.combine = combine,
 	};
-	xhr.open('GET', url);
-	xhr.responseType = 'blob';
-	xhr.send();
-}
+}( 
+	(window || {}), 
+	(JSON || { stringify: function() { return "{}"; }, parse: function() { return {}; } }), 
+	(localStorage || { getItem: function() { return {} }, setItem: function() {}, removeItem: function() {} })
+));
