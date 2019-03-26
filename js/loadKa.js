@@ -288,8 +288,12 @@ function createProcessing()
 
 	code = combine(new Function("return " + code.toString().split("\n").join(" "))(), any);
 	
-	var pattern = code.toString().match("this[ ]*\[[ ]*\[[ ]*(\"KAInfiniteLoopSetTimeout\")[ ]*\][ ]*\][ ]*\([ ]*\d*[ ]*\);*")[0];
-	code = new Function("return " + code.toString().replace(pattern, ""))();
+	var matched = code.toString().match("this[ ]*\[[ ]*\[[ ]*(\"KAInfiniteLoopSetTimeout\")[ ]*\][ ]*\][ ]*\([ ]*\d*[ ]*\);*");
+	
+	if(matched)
+	{
+		code = new Function("return " + code.toString().replace(matched[0], ""))();
+	}
 	
 	window.canvas = document.getElementById("canvas"); 
 	window.processing = new Processing(canvas, code);
