@@ -154,6 +154,9 @@
 			image : ["https://www.kasandbox.org/third_party/javascript-khansrc/live-editor/build/images/", 
 					 "https://github.com/Khan/live-editor/tree/master/images",
 					 "https://www.kasandbox.org/programming-images/"],
+			sound : [
+				"https://raw.githubusercontent.com/Khan/live-editor/master/sounds/"
+			]
 		};
 
 		var self = this;
@@ -176,14 +179,19 @@
 				processing.keyReleased = function() {};
 				processing.keyTyped = function() {};
 				
-				processing.getSound = function(name)
-				{ 
-					return "Sound"; 
-				};
-				processing.playSound = function(sound) 
-				{ 
-					console.log(sound + " is not supported yet..."); 
-				};
+				processing.playSound = function(source, volume)
+			    {
+			        var sound = new Audio();
+			        sound.volume = (typeof volume === "number" ? vol : 1);
+			        sound.appendChild(source);
+			        sound.play(); 
+			    };
+			    processing.getSound = function(path)
+			    {
+			    	var source = document.createElement("source");
+			        source.src = window.links.sound[0] + path + ".mp3";
+			        return source;
+			    };
 
 				processing.getImage = function(name)
 				{
