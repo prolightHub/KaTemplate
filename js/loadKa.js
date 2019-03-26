@@ -9,147 +9,10 @@
 		this.cache = window.cache = {};
 		this.cache.loadedImages = window.cache.loadedImages = {};
 		this.cache.imageNames = window.cache.imageNames = [
-			"avatars/aqualine-sapling", 
-			"avatars/aqualine-seed", 
-			"avatars/aqualine-seedling", 
-			"avatars/aqualine-tree", 
-			"avatars/aqualine-ultimate", 
-			"avatars/avatar-team", 
-			"avatars/duskpin-sapling", 
-			"avatars/duskpin-seed", 
-			"avatars/duskpin-tree", 
-			"avatars/duskpin-ultimate", 
-			"avatars/leaf-blue", 
-			"avatars/leaf-green", 
-			"avatars/leaf-grey", 
-			"avatars/leaf-orange", 
-			"avatars/leaf-red", 
-			"avatars/leaf-yellow", 
-			"avatars/leafers-sapling", 
-			"avatars/leafers-seed", 
-			"avatars/leafers-seedling", 
-			"avatars/leafers-tree", 
-			"avatars/leafers-ultimate", 
-			"avatars/marcimus", 
-			"avatars/marcimus-orange", 
-			"avatars/marcimus-purple", 
-			"avatars/marcimus-red", 
-			"avatars/mr-pants", 
-			"avatars/mr-pants-green", 
-			"avatars/mr-pants-orange", 
-			"avatars/mr-pants-pink", 
-			"avatars/mr-pants-purple", 
-			"avatars/mr-pants-with-hat", 
-			"avatars/mr-pink", 
-			"avatars/mr-pink-green", 
-			"avatars/mr-pink-orange", 
-			"avatars/old-spice-man", 
-			"avatars/old-spice-man-blue", 
-			"avatars/orange-juice-squid", 
-			"avatars/piceratops-sapling", 
-			"avatars/piceratops-seed", 
-			"avatars/piceratops-seedling", 
-			"avatars/piceratops-tree", 
-			"avatars/piceratops-ultimate", 
-			"avatars/primosaur-sapling", 
-			"avatars/primosaur-seed", 
-			"avatars/primosaur-seedling", 
-			"avatars/primosaur-tree", 
-			"avatars/primosaur-ultimate", 
-			"avatars/purple-pi", 
-			"avatars/purple-pi-pink", 
-			"avatars/purple-pi-teal", 
-			"avatars/questionmark", 
-			"avatars/robot_female_1", 
-			"avatars/robot_female_2", 
-			"avatars/robot_female_3", 
-			"avatars/robot_male_1", 
-			"avatars/robot_male_2", 
-			"avatars/robot_male_3", 
-			"avatars/spunky-sam", 
-			"avatars/spunky-sam-green", 
-			"avatars/spunky-sam-orange", 
-			"avatars/spunky-sam-red", 
-			"avatars/starky-sapling", 
-			"avatars/starky-seed", 
-			"avatars/starky-seedling", 
-			"avatars/starky-tree", 
-			"avatars/starky-ultimate", 
-			"creatures/Hopper-Happy", 
-			"creatures/Hopper-Cool", 
-			"creatures/Hopper-Jumping", 
-			"creatures/OhNoes", 
-			"creatures/OhNoes-Happy", 
-			"creatures/OhNoes-Hmm", 
-			"cute/Blank", 
-			"cute/BrownBlock", 
-			"cute/CharacterBoy", 
-			"cute/CharacterCatGirl", 
-			"cute/CharacterHornGirl", 
-			"cute/CharacterPinkGirl", 
-			"cute/CharacterPrincessGirl", 
-			"cute/ChestClosed", 
-			"cute/ChestLid", 
-			"cute/ChestOpen", 
-			"cute/DirtBlock", 
-			"cute/DoorTallClosed", 
-			"cute/DoorTallOpen", 
-			"cute/EnemyBug", 
-			"cute/GemBlue", 
-			"cute/GemGreen", 
-			"cute/GemOrange", 
-			"cute/GrassBlock", 
-			"cute/Heart", 
-			"cute/Key", 
-			"cute/PlainBlock", 
-			"cute/RampEast", 
-			"cute/RampWest", 
-			"cute/Rock", 
-			"cute/RoofEast", 
-			"cute/RoofNorth", 
-			"cute/RoofNorthEast", 
-			"cute/RoofNorthWest", 
-			"cute/RoofSouth", 
-			"cute/RoofSouthEast", 
-			"cute/RoofSouthWest", 
-			"cute/RoofWest", 
-			"cute/Selector", 
-			"cute/ShadowEast", 
-			"cute/ShadowNorth", 
-			"cute/ShadowNorthEast", 
-			"cute/ShadowNorthWest", 
-			"cute/ShadowSideWest", 
-			"cute/ShadowSouth", 
-			"cute/ShadowSouthEast", 
-			"cute/ShadowSouthWest", 
-			"cute/ShadowWest", 
-			"cute/WoodBlock",
-			"cute/Star", 
-			"cute/StoneBlock", 
-			"cute/StoneBlockTall", 
-			"cute/TreeShort", 
-			"cute/TreeTall", 
-			"space/girl2", 
-			"space/girl3", 
-			"space/girl4", 
-			"space/girl5", 
-			"space/healthheart", 
-			"space/minus", 
-			"space/octopus", 
-			"space/planet", 
-			"space/plus", 
-			"space/rocketship", 
-			"space/star", 
-			"space/3", 
-			"space/4", 
-			"space/5", 
-			"space/6", 
-			"space/7", 
-			"space/8", 
-			"space/9"
+			"avatars/aqualine-sapling"
 		];
 
-		window.links = {
+		this.links = window.links = {
 			proxyUrl : "https://cors-anywhere.herokuapp.com/",
 			image : ["https://www.kasandbox.org/third_party/javascript-khansrc/live-editor/build/images/", 
 					 "https://github.com/Khan/live-editor/tree/master/images",
@@ -160,6 +23,20 @@
 		};
 
 		var self = this;
+
+		this.isIE = function() 
+		{
+			if(window.navigator)
+			{
+				var ua = window.navigator.userAgent;
+				/* MSIE used to detect old browsers and Trident used to newer ones*/
+				var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+
+				return is_ie; 
+			}
+
+			return false;
+		};
 
 		this.setup = function()
 		{
@@ -230,8 +107,23 @@
 
 				processing.getImage = function(name)
 				{
-					return (window.cache || self.cache).loadedImages[name] || processing.get(0, 0, 1, 1);
+					var img = self.cache.loadedImages[name.split(".")[0]];
+					if(img)
+					{
+						return img;
+					}
+
+					var url = self.links.image[0] + name.split(".")[0] + ".png";
+
+					if(self.imageProcessing && self.imageProcessing.imageCache)
+					{
+						return self.imageProcessing.getImage(name);
+					}
+
+					return processing.loadImage(url);
 				};
+
+				var backupImage = processing.get(0, 0, 2, 2);
 
 				var lastGet = processing.get;
 				processing.get = function()
@@ -243,10 +135,27 @@
 					{
 						if(arguments[2] !== 0 && arguments[3] !== 0)
 						{
-							console.log(e);
+							if(self.okayToReload)
+							{
+								if(!self.reTimeout)
+								{
+									self.reTimeout = true;
+									(window.setTimeout || function(func)
+									{
+										return func.apply(this, arguments);
+									})
+									(function()
+									{
+										window.location.reload();
+										self.reTimeout = false;
+									}, 3000);
+								}
+							}
 						}else{
 							throw e;
 						}
+
+						return backupImage;
 					}
 				};
 
@@ -288,8 +197,20 @@
 			window.processing = new Processing(canvas, code);
 		};
 
+		if(this.isIE())
+		{
+			this.setup();
+			return;
+		}
+
 		this.imageProcessing = new Processing(canvas, function(processing)
 		{
+			with(processing)
+			{
+				size(400, 400);
+				background(0, 0, 0);
+			}
+
 			try{
 				processing.imageCache = JSON.parse(localStorage.getItem("pjs-imageCache"));
 			}
@@ -301,6 +222,7 @@
 
 			if(!processing.imageCache)
 			{
+				self.okayToReload = window.location ? true : false;
 				processing.imageCache = {};
 			}
 
@@ -308,7 +230,7 @@
 			{
 				if(name === undefined) { return get(0, 0, 1, 1); }
 
-				url = url || window.links.image[0] + name.split(".")[0] + ".png";
+				url = url || self.links.image[0] + name.split(".")[0] + ".png";
 				callback = callback || function() {};
 
 				if(!processing.imageCache)
@@ -324,21 +246,35 @@
 					return img;
 				}
 
-				toDataURL(window.links.proxyUrl + url, function(dataUrl)
+				toDataURL(self.links.proxyUrl + url, function(dataUrl)
 				{
-					processing.imageCache[name] = dataUrl; 
-					localStorage.setItem("pjs-imageCache", JSON.stringify(processing.imageCache));
+					processing.imageCache[name] = dataUrl;
+
+					if(!self.colTimeout)
+					{
+						self.colTimeout = true;
+						(window.setTimeout || function(func)
+						{
+							return func.apply(this, arguments);
+						})
+						(function()
+						{
+							localStorage.setItem("pjs-imageCache", JSON.stringify(processing.imageCache));
+							self.colTimeout = false;
+						}, 200);
+					}
+					
 					callback(processing.imageCache[name], name);
 				});
 
 				return processing.loadImage(processing.imageCache[url] || url);
 			};
 
-			window.cache.imageNames.forEach(function(element, index, array)
+			self.cache.imageNames.forEach(function(element, index, array)
 			{
 				processing.getImage(element, function(img, name)
 				{
-					window.cache.loadedImages[name] = img;
+					self.cache.loadedImages[name] = img;
 
 					if(index === array.length - 1)
 					{
@@ -413,5 +349,5 @@
 }( 
 	(window || {}), 
 	(JSON || { stringify: function() { return "{}"; }, parse: function() { return {}; } }), 
-	(localStorage || { getItem: function() { return {} }, setItem: function() {}, removeItem: function() {} })
+	(localStorage || { getItem: function() { return "{}"; }, setItem: function() {}, removeItem: function() {} })
 ));
