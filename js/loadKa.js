@@ -152,6 +152,8 @@
 						return self.imageProcessing.getImage(name);
 					}
 
+					processing.get(0, 0, 1, 1);
+
 					return processing.loadImage(url);
 				};
 
@@ -216,7 +218,14 @@
 				};
 			}
 
-			code = combine(new Function("return " + code.toString().split("\n").join(" "))(), any);
+			var checkSetup = function()
+			{
+				if(processing.setup && typeof processing.setup !== "function")
+				{
+					processing.setup = function () {};
+				}
+			};
+			code = combine(combine(new Function("return " + code.toString().split("\n").join(" "))(), any), checkSetup);
 			
 			var matched = code.toString().match("this[ ]*\[[ ]*\[[ ]*(\"KAInfiniteLoopSetTimeout\")[ ]*\][ ]*\][ ]*\([ ]*\d*[ ]*\);*");
 			
@@ -378,7 +387,7 @@
 		toDataURL: window.toDataURL = this.toDataURL = toDataURL,
 		combine: window.combine = this.combine = combine,
 	};
-}( 
+}(
 	(window || {}), 
 	(JSON || { stringify: function() { return "{}"; }, parse: function() { return {}; } }), 
 	(localStorage || { getItem: function() { return "{}"; }, setItem: function() {}, removeItem: function() {} })
