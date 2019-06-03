@@ -1,5 +1,6 @@
 # KaTemplate
 Can handle running Khan Academy programs on your computer
+Please refresh again to load extra sounds and images.
 
 # Usage:
 
