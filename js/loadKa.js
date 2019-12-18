@@ -9,13 +9,13 @@
 		this.cache = window.cache = {};
 		this.cache.loadedImages = window.cache.loadedImages = {};
 		this.cache.imageNames = window.cache.imageNames = [
-			"avatars/aqualine-sapling"
+			"avatars/*"
 		];
 
 		this.links = window.links = {
 			proxyUrl : "https://cors-anywhere.herokuapp.com/",
-			image : ["https://www.kasandbox.org/third_party/javascript-khansrc/live-editor/build/images/", 
-					 "https://github.com/Khan/live-editor/tree/master/images",
+			image : ["https://github.com/Khan/live-editor/tree/master/images",
+					 "https://www.kasandbox.org/third_party/javascript-khansrc/live-editor/build/images/",
 					 "https://www.kasandbox.org/programming-images/"],
 			sound : [
 				"https://raw.githubusercontent.com/Khan/live-editor/master/sounds/"
@@ -41,6 +41,40 @@
 		(function()
 		{
 			try{
+
+				var rg = (/getImage([ ]*)\(([ ]*)\'(.*)\'([ ]*)\)/g);
+				var array = [];
+
+				var v;
+				var i = 0;
+
+				while(v !== null)
+				{
+					v = rg.exec(any.toString());
+					if(v && v[3] && this.cache.imageNames.indexOf(v[3].split(".")[0]) === -1)
+					{
+						array.push(v[3].split(".")[0]);
+					}
+
+					i++;
+					if(i > 2000)
+					{
+						break;
+					}
+				}
+
+				this.cache.imageNames = this.cache.imageNames.concat(array);
+			}
+			catch(e)
+			{
+				console.log(e);
+			}
+		}());
+
+		(function()
+		{
+			try{
+
 				var rg = (/getImage([ ]*)\(([ ]*)\"(.*)\"([ ]*)\)/g);
 				var array = [];
 
