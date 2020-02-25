@@ -278,6 +278,8 @@
 			return;
 		}
 
+		console.log("It works!");
+
 		this.imageProcessing = new Processing(canvas, function(processing)
 		{
 			with(processing)
